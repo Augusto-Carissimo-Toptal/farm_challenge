@@ -1,0 +1,3 @@
+class Chicken < Animal
+
+end
