@@ -38,7 +38,7 @@ class Farm
     wool = sum_production(sheep)
 
     f = File.new(path, 'w').write(
-      "Cows milk amount -- #{milk}, Chickens eggs count -- #{eggs}, and Sheep wool amount -- #{wool}")
+      "Cows milk amount -- #{milk}\nChickens eggs count -- #{eggs}\nSheep wool amount -- #{wool}")
   end
 
   private
