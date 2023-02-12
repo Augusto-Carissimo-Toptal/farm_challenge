@@ -1,0 +1,3 @@
+Cows milk amount -- 52
+Chickens eggs count -- 49
+Sheep wool amount -- 99
