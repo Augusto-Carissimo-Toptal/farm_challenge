@@ -1,5 +1,11 @@
+require_relative "cow"
+require_relative "sheep"
+require_relative "chicken"
+
 class Farm
   attr :name, :cows, :chickens, :sheep
+
+  FARM_ANINMALS = [Cow, Sheep, Chicken].freeze
 
   def initialize(name)
     @name = "#{name}'s farm"
@@ -9,43 +15,38 @@ class Farm
   end
 
   def add_animal(instance_of_animal)
-    case instance_of_animal
-    when Cow
-      cows << instance_of_animal
-    when Chicken
-      chickens << instance_of_animal
-    when Sheep
-      sheep << instance_of_animal
-    end
+    class_name = instance_of_animal.class.to_s
+    animal_hash[class_name] << instance_of_animal
   end
 
   def remove_animal(instance_of_animal)
-    if cows.any? { |cow| cow.name == instance_of_animal.name}
-      cows.delete(instance_of_animal)
-    elsif chickens.any? { |chicken| chicken.name == instance_of_animal.name}
-      chickens.delete(instance_of_animal)
-    elsif sheep.any? { |individual_sheep| individual_sheep.name == instance_of_animal.name}
-      sheep.delete(instance_of_animal)
-    end
+    class_name = instance_of_animal.class.to_s
+    animal_hash[class_name].delete(instance_of_animal)
   end
 
   def dump_production_to_file
     path = './lib/production.txt'
-    File.delete(path) if File.exist?(path)
 
-    eggs = sum_production(chickens)
-    milk = sum_production(cows)
-    wool = sum_production(sheep)
-
-    f = File.new(path, 'w').write(
-      "Cows milk amount -- #{milk}\nChickens eggs count -- #{eggs}\nSheep wool amount -- #{wool}")
+    File.open(path, "w+") do |file|
+      file.puts generate_report_data
+    end
   end
 
   private
 
+  def generate_report_data
+    FARM_ANINMALS.map do |animal_class|
+      animal_array = animal_hash[animal_class.to_s]
+      production = sum_production(animal_array)
+      "#{animal_class.label} -- #{production}"
+    end.join("\n")
+  end
+
   def sum_production(animals)
-    products = 0
-    animals.map { |animal| products += animal.total_food }
-    products
+    animals.sum(&:total_food)
+  end
+
+  def animal_hash
+    { 'Cow' => cows, 'Chicken' => chickens, 'Sheep' => sheep }
   end
 end
